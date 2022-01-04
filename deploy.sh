@@ -5,53 +5,70 @@ NAMESPACE=plausible
 
 function main() {
 
-    _assert_variables_set GCP_PROJECT_ID
+  _assert_variables_set GCP_PROJECT_ID
 
-    pushd "$(dirname "${BASH_SOURCE[0]}")/k8s" > /dev/null
+  if [[ $(kubectl get ns | grep -c "plausible") -eq 0 ]]; then
+      _console_msg "Creating namespace ..." INFO true
+      kubectl create ns ${NAMESPACE}
+      kubectl label namespace ${NAMESPACE} istio-injection=enabled
+  fi
 
-    if [[ $(kubectl get ns | grep -c "plausible") -eq 0 ]]; then
-        _console_msg "Creating namespace ..." INFO true
-        kubectl create ns ${NAMESPACE}
-        kubectl label namespace ${NAMESPACE} istio-injection=enabled
-    fi
+  setup_secrets
 
+  _console_msg "Deploying plausible-db ..." INFO true
+  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-db/" > /dev/null
+  kustomize build . | kubectl apply -f -
+  kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
+  popd >/dev/null
 
-    _console_msg "Creating secrets ..." INFO true
+  _console_msg "Deploying plausible-events-db ..." INFO true
+  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-events-db/" > /dev/null
+  kustomize build . | kubectl apply -f -
+  kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
+  popd >/dev/null
 
-    ADMIN_USER_EMAIL=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_EMAIL" --project="${GCP_PROJECT_ID}")
-    ADMIN_USER_NAME=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_NAME" --project="${GCP_PROJECT_ID}")
-    ADMIN_USER_PWD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_PWD" --project="${GCP_PROJECT_ID}")
-    SECRET_KEY_BASE=$(gcloud secrets versions access latest --secret="PLAUSIBLE_SECRET_KEY_BASE" --project="${GCP_PROJECT_ID}")
+  _console_msg "Deploying plausible-server ..." INFO true
+  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-server/" > /dev/null
+  kustomize build . | kubectl apply -f -
+  kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
+  popd >/dev/null
 
-    POSTGRES_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_USER" --project="${GCP_PROJECT_ID}")
-    POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_PASSWORD" --project="${GCP_PROJECT_ID}")
-    CLICKHOUSE_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_USER" --project="${GCP_PROJECT_ID}")
-    CLICKHOUSE_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_PASSWORD" --project="${GCP_PROJECT_ID}")
-
-    export ADMIN_USER_EMAIL ADMIN_USER_NAME ADMIN_USER_PWD SECRET_KEY_BASE 
-    export POSTGRES_USER POSTGRES_PASSWORD CLICKHOUSE_USER CLICKHOUSE_PASSWORD
-
-    cat plausible-conf.env | envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE \$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD" > plausible-conf.env.secret
-    trap "rm -f plausible-conf.env.secret" EXIT
-
-    if [[ $(kubectl get secret -n=plausible | grep -c "plausible-config") -gt 0 ]]; then
-        kubectl delete secret plausible-config -n=${NAMESPACE}
-    fi
-
-    kubectl -n=${NAMESPACE} create secret generic plausible-config --from-env-file=plausible-conf.env.secret
-
-    _console_msg "Deploying app ..." INFO true
-
-    kustomize build . | envsubst "\$GCP_PROJECT_ID" | kubectl apply -f -
-
-    kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=300s
-
-    popd >/dev/null
-
-    _console_msg "Deployment complete" INFO true
+  _console_msg "Deployment complete" INFO true
 
 }
 
+
+function setup_secrets() {
+
+  _console_msg "Creating secrets ..." INFO true
+
+  pushd "$(dirname "${BASH_SOURCE[0]}")/" > /dev/null
+
+  ADMIN_USER_EMAIL=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_EMAIL" --project="${GCP_PROJECT_ID}")
+  ADMIN_USER_NAME=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_NAME" --project="${GCP_PROJECT_ID}")
+  ADMIN_USER_PWD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_PWD" --project="${GCP_PROJECT_ID}")
+  SECRET_KEY_BASE=$(gcloud secrets versions access latest --secret="PLAUSIBLE_SECRET_KEY_BASE" --project="${GCP_PROJECT_ID}")
+
+  POSTGRES_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_USER" --project="${GCP_PROJECT_ID}")
+  POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_PASSWORD" --project="${GCP_PROJECT_ID}")
+  CLICKHOUSE_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_USER" --project="${GCP_PROJECT_ID}")
+  CLICKHOUSE_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_PASSWORD" --project="${GCP_PROJECT_ID}")
+
+  export ADMIN_USER_EMAIL ADMIN_USER_NAME ADMIN_USER_PWD SECRET_KEY_BASE 
+  export POSTGRES_USER POSTGRES_PASSWORD CLICKHOUSE_USER CLICKHOUSE_PASSWORD
+
+  cat plausible-conf.env | envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE \$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD" > plausible-conf.env.secret
+  trap "rm -f plausible-conf.env.secret" EXIT
+
+  if [[ $(kubectl get secret -n=plausible | grep -c "plausible-config") -gt 0 ]]; then
+      kubectl delete secret plausible-config -n=${NAMESPACE}
+  fi
+
+  kubectl -n=${NAMESPACE} create secret generic plausible-config --from-env-file=plausible-conf.env.secret
+
+  popd >/dev/null
+
+}
 
 function _assert_variables_set() {
   local error=0

@@ -9,6 +9,6 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [x] Sort out secrets
 - [ ] Sort out database
 - [ ] Deploy main app into GKE
-- [ ] Configure with Cloud SQL (Postgres)
+- [ ] Deal with latest tags
 - [ ] Sort out the Mail bit
 - [ ] Tests in CI

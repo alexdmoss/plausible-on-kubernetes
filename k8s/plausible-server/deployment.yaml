@@ -30,9 +30,9 @@ spec:
                 name: plausible-config
           env:
             - name: DATABASE_URL
-              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:3306/plausible
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(PLAUSIBLE_DB_SERVICE_HOST):$(PLAUSIBLE_DB_SERVICE_PORT)/plausible
             - name: CLICKHOUSE_DATABASE_URL
-              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@localhost:3306/plausible
+              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@$(PLAUSIBLE_EVENTS_DB_SERVICE_HOST):$(PLAUSIBLE_EVENTS_DB_SERVICE_PORT)/plausible
             - name: SMTP_HOST_ADDR
               value: $(PLAUSIBLE_SMTP_SERVICE_HOST)
           securityContext:
@@ -55,9 +55,9 @@ spec:
                 name: plausible-config
           env:
             - name: DATABASE_URL
-              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:3306/plausible
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(PLAUSIBLE_DB_SERVICE_HOST):$(PLAUSIBLE_DB_SERVICE_PORT)/plausible
             - name: CLICKHOUSE_DATABASE_URL
-              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@localhost:3306/plausible
+              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@$(PLAUSIBLE_EVENTS_DB_SERVICE_HOST):$(PLAUSIBLE_EVENTS_DB_SERVICE_PORT)/plausible
             - name: SMTP_HOST_ADDR
               value: $(PLAUSIBLE_SMTP_SERVICE_HOST)
           securityContext:
@@ -83,26 +83,3 @@ spec:
             initialDelaySeconds: 45
             failureThreshold: 3
             periodSeconds: 10 
-        - name: cloudsql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.27.1
-          command:
-            - "/cloud_sql_proxy"
-            - "-instances=${GCP_PROJECT_ID}:europe-west1:postgres-instance-02=tcp:3306"
-          resources:
-            requests:
-              cpu: 10m
-              memory: 50Mi
-            limits:
-              cpu: 100m
-              memory: 250Mi
-          securityContext:
-            runAsUser: 65532  # non-root user
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-          volumeMounts:
-          - name: cloudsql
-            mountPath: /cloudsql
-      serviceAccountName: plausible
-      volumes:
-      - name: cloudsql
-        emptyDir: {}

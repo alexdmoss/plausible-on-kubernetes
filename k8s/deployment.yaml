@@ -1,0 +1,108 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plausible
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    spec:
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      initContainers:
+        - name: plausible-init
+          image: plausible/analytics:latest
+          command:
+            - "/bin/sh"
+            - "-c"
+          args:
+            - sleep 30 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh db init-admin
+          envFrom:
+            - secretRef:
+                name: plausible-config
+          env:
+            - name: DATABASE_URL
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:3306/plausible
+            - name: CLICKHOUSE_DATABASE_URL
+              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@localhost:3306/plausible
+            - name: SMTP_HOST_ADDR
+              value: $(PLAUSIBLE_SMTP_SERVICE_HOST)
+          securityContext:
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: 1500m
+            requests:
+              memory: 50Mi
+              cpu: 10m
+      containers:
+        - name: plausible
+          image: plausible/analytics:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: plausible-config
+          env:
+            - name: DATABASE_URL
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@localhost:3306/plausible
+            - name: CLICKHOUSE_DATABASE_URL
+              value: http://$(CLICKHOUSE_USER):$(CLICKHOUSE_PASSWORD)@localhost:3306/plausible
+            - name: SMTP_HOST_ADDR
+              value: $(PLAUSIBLE_SMTP_SERVICE_HOST)
+          securityContext:
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: 1500m
+            requests:
+              memory: 140Mi
+              cpu: 10m
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 35
+            failureThreshold: 6
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 45
+            failureThreshold: 3
+            periodSeconds: 10 
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.27.1
+          command:
+            - "/cloud_sql_proxy"
+            - "-instances=${GCP_PROJECT_ID}:europe-west1:postgres-instance-01=tcp:3306"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+            limits:
+              cpu: 100m
+              memory: 250Mi
+          securityContext:
+            runAsUser: 65532  # non-root user
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+          volumeMounts:
+          - name: cloudsql
+            mountPath: /cloudsql
+      serviceAccountName: plausible
+      volumes:
+      - name: cloudsql
+        emptyDir: {}

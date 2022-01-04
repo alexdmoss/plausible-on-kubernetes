@@ -9,10 +9,9 @@ configure:
     GOOGLE_CREDENTIALS: "${K8S_CREDENTIALS}"
   rules:
       - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-  only:
-    changes:
-    - terraform/**/*
-    - .gitlab-ci.yml
+        changes:
+        - terraform/**/*
+        - .gitlab-ci.yml
   before_script:
   - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
   - gcloud config set project "$(echo "${GOOGLE_CREDENTIALS}" | jq -r '.project_id')"

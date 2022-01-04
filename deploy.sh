@@ -44,6 +44,8 @@ function main() {
 
     kustomize build . | envsubst "\$GCP_PROJECT_ID" | kubectl apply -f -
 
+    kubectl rollout status deploy/plausible --timeout=300s
+    
     popd >/dev/null
 
     _console_msg "Deployment complete" INFO true

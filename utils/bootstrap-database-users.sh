@@ -2,7 +2,7 @@
 
 if [[ -z ${GCP_PROJECT_ID} ]]; then echo "-> [ERROR] GCP_PROJECT_ID not set"; exit 1; fi
 
-INSTANCE=postgres-instance-01
+INSTANCE=postgres-instance-02
 
 POSTGRES_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_USER" --project="${GCP_PROJECT_ID}")
 POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_PASSWORD" --project="${GCP_PROJECT_ID}")

@@ -87,7 +87,7 @@ spec:
           image: gcr.io/cloudsql-docker/gce-proxy:1.27.1
           command:
             - "/cloud_sql_proxy"
-            - "-instances=${GCP_PROJECT_ID}:europe-west1:postgres-instance-01=tcp:3306"
+            - "-instances=${GCP_PROJECT_ID}:europe-west1:postgres-instance-02=tcp:3306"
           resources:
             requests:
               cpu: 10m

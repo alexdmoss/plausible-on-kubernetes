@@ -7,9 +7,9 @@ configure:
   image: mosstech/ci-tools:latest
   variables:
     GOOGLE_CREDENTIALS: "${K8S_CREDENTIALS}"
+  rules:
+      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   only:
-    refs:
-    - master
     changes:
     - terraform/**/*
     - .gitlab-ci.yml
@@ -21,17 +21,14 @@ configure:
   after_script:
   - gcloud auth revoke --verbosity=error
 
-
 deploy:
   stage: deploy
   image: mosstech/ci-tools:latest
-  only:
-  - master
+  rules:
+      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   before_script:
     - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./deploy.sh
-
-# TODO: Smoke Test

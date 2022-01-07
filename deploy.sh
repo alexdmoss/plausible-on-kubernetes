@@ -15,22 +15,20 @@ function main() {
 
   setup_secrets
 
+  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/" > /dev/null
+
   _console_msg "Deploying plausible-db ..." INFO true
-  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-db/" > /dev/null
-  kustomize build . | kubectl apply -f -
+  kustomize build ./plausible-db/ | kubectl apply -f -
   kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
-  popd >/dev/null
 
   _console_msg "Deploying plausible-events-db ..." INFO true
-  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-events-db/" > /dev/null
-  kustomize build . | kubectl apply -f -
+  kustomize build ./plausible-events-db/ | kubectl apply -f -
   kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
-  popd >/dev/null
 
   _console_msg "Deploying plausible-server ..." INFO true
-  pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/plausible-server/" > /dev/null
-  kustomize build . | kubectl apply -f -
+  kustomize build ./plausible-server/ | kubectl apply -f -
   kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
+
   popd >/dev/null
 
   _console_msg "Deployment complete" INFO true
@@ -54,17 +52,13 @@ function setup_secrets() {
   CLICKHOUSE_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_USER" --project="${GCP_PROJECT_ID}")
   CLICKHOUSE_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_PASSWORD" --project="${GCP_PROJECT_ID}")
 
-  export ADMIN_USER_EMAIL ADMIN_USER_NAME ADMIN_USER_PWD SECRET_KEY_BASE 
+  SENDGRID_KEY=$(gcloud secrets versions access latest --secret="PLAUSIBLE_SENDGRID_KEY" --project="${GCP_PROJECT_ID}")
+
+  export ADMIN_USER_EMAIL ADMIN_USER_NAME ADMIN_USER_PWD SECRET_KEY_BASE SENDGRID_KEY
   export POSTGRES_USER POSTGRES_PASSWORD CLICKHOUSE_USER CLICKHOUSE_PASSWORD
 
-  cat plausible-conf.env | envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE \$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD" > plausible-conf.env.secret
-  trap "rm -f plausible-conf.env.secret" EXIT
-
-  if [[ $(kubectl get secret -n=plausible | grep -c "plausible-config") -gt 0 ]]; then
-      kubectl delete secret plausible-config -n=${NAMESPACE}
-  fi
-
-  kubectl -n=${NAMESPACE} create secret generic plausible-config --from-env-file=plausible-conf.env.secret
+  cat plausible-conf.env | envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE \$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD \$SENDGRID_KEY" > k8s/base/plausible-conf.env.secret
+  trap "rm -f k8s/base/plausible-conf.env.secret" EXIT
 
   popd >/dev/null
 

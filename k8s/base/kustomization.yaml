@@ -6,11 +6,8 @@ namespace: plausible
 
 commonLabels:
   app: plausible
-  name: plausible-db
 
-bases:
-  - ../base/
-
-resources:
-  - service.yaml
-  - stateful-set.yaml
+secretGenerator:
+  - name: plausible-config
+    envs:
+      - plausible-conf.env.secret

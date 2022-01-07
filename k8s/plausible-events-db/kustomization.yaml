@@ -5,8 +5,10 @@ kind: Kustomization
 namespace: plausible
 
 commonLabels:
-  app: plausible
   name: events-db
+
+bases:
+  - ../base/
 
 resources:
   - config-map.yaml

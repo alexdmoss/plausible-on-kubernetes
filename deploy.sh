@@ -7,6 +7,12 @@ function main() {
 
   _assert_variables_set GCP_PROJECT_ID POSTGRES_VERSION CLICKHOUSE_VERSION PLAUSIBLE_VERSION
 
+  if [[ -z ${1:-} ]]; then
+    action="ALL"
+  else
+    action="${1}"
+  fi
+
   if [[ $(kubectl get ns | grep -c "plausible") -eq 0 ]]; then
       _console_msg "Creating namespace ..." INFO true
       kubectl create ns ${NAMESPACE}
@@ -17,17 +23,23 @@ function main() {
 
   pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/" > /dev/null
 
-  _console_msg "Deploying plausible-db ..." INFO true
-  kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION" | kubectl apply -f -
-  kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
+  if [[ "${action}" == "plausible-db" ]] || [[ ${action} == "ALL" ]]; then
+    _console_msg "Deploying plausible-db ..." INFO true
+    kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION" | kubectl apply -f -
+    kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
+  fi
 
-  _console_msg "Deploying plausible-events-db ..." INFO true
-  kustomize build ./plausible-events-db/ | envsubst "\$CLICKHOUSE_VERSION" | kubectl apply -f -
-  kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
+  if [[ ${action} == "plausible-events-db" ]] || [[ ${action} == "ALL" ]]; then
+    _console_msg "Deploying plausible-events-db ..." INFO true
+    kustomize build ./plausible-events-db/ | envsubst "\$CLICKHOUSE_VERSION" | kubectl apply -f -
+    kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
+  fi
 
-  _console_msg "Deploying plausible-server ..." INFO true
-  kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_VERSION" | kubectl apply -f -
-  kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
+  if [[ ${action} == "plausible-server" ]] || [[ ${action} == "ALL" ]]; then
+    _console_msg "Deploying plausible-server ..." INFO true
+    kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_VERSION" | kubectl apply -f -
+    kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
+  fi
 
   popd >/dev/null
 

@@ -5,7 +5,7 @@ NAMESPACE=plausible
 
 function main() {
 
-  _assert_variables_set GCP_PROJECT_ID
+  _assert_variables_set GCP_PROJECT_ID POSTGRES_VERSION CLICKHOUSE_VERSION PLAUSIBLE_VERSION
 
   if [[ $(kubectl get ns | grep -c "plausible") -eq 0 ]]; then
       _console_msg "Creating namespace ..." INFO true
@@ -18,15 +18,15 @@ function main() {
   pushd "$(dirname "${BASH_SOURCE[0]}")/k8s/" > /dev/null
 
   _console_msg "Deploying plausible-db ..." INFO true
-  kustomize build ./plausible-db/ | kubectl apply -f -
+  kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION" | kubectl apply -f -
   kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
 
   _console_msg "Deploying plausible-events-db ..." INFO true
-  kustomize build ./plausible-events-db/ | kubectl apply -f -
+  kustomize build ./plausible-events-db/ | envsubst "\$CLICKHOUSE_VERSION" | kubectl apply -f -
   kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
 
   _console_msg "Deploying plausible-server ..." INFO true
-  kustomize build ./plausible-server/ | kubectl apply -f -
+  kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_VERSION" | kubectl apply -f -
   kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
 
   popd >/dev/null

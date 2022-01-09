@@ -2,7 +2,7 @@ stages:
 - deploy
 
 variables:
-  POSTGRES_VERSION: 9.6.24-alpine3.15
+  POSTGRES_VERSION: 14.1-alpine3.15
   CLICKHOUSE_VERSION: 21.12.3.32-alpine
   PLAUSIBLE_VERSION: v1.4.3
 

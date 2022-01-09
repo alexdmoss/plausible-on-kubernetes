@@ -1,7 +1,5 @@
 stages:
-- deploy-db
-- deploy-events-db
-- deploy-server
+- deploy
 
 variables:
   POSTGRES_VERSION: 14.1-alpine3.15

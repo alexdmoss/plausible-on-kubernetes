@@ -14,10 +14,10 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [x] Try without SMTP relay process
 - [x] Deal with latest tags
 - [ ] Data backup
-- [ ] MaxMind GeoIP
+- [-] _skipped: seems to work fine with the DB-IP option_ MaxMind GeoIP
 - [ ] Google Search integration
 - [ ] Twitter integration
-- [ ] Check X-Forwarded-For header bit
+- [x] _edit on ingress service needed_ Check X-Forwarded-For header bit
 - [ ] Proxy the tracking JS - https://plausible.io/docs/proxy/introduction
 - [ ] Outbound link tracking test - https://plausible.io/docs/outbound-link-click-tracking
 - [ ] 404 tracking test - https://plausible.io/docs/404-error-pages-tracking
@@ -30,6 +30,7 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 2. I set up some kustomization with a SecretGenerator so that whenever I change secret values, the system restarts to pick it up.
 3. Found that the separate smtp server was not required when using Sendgrid - the app I assume picks up directly from there instead of going local to the cluster.
 4. I switched out `latest` tags for pinned versions. This is good practice to get into imho - less surprises / more deterministic, versus needing to review and keep up to date yourself.
+5. I needed to edit my `Type: LoadBalancer` `Service` to `spec.externalTrafficPolicy: Local`. This affects evenness of load balancing a little, but I think this will be tolerable.
 
 ---
 

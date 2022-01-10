@@ -13,14 +13,14 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [x] Test email works
 - [x] Try without SMTP relay process
 - [x] Deal with latest tags
-- [ ] Data backup
 - [-] _skipped: seems to work fine with the DB-IP option_ MaxMind GeoIP
-- [ ] Google Search integration
-- [ ] Twitter integration
 - [x] _edit on ingress service needed_ Check X-Forwarded-For header bit
-- [ ] Proxy the tracking JS - https://plausible.io/docs/proxy/introduction
-- [ ] Outbound link tracking test - https://plausible.io/docs/outbound-link-click-tracking
-- [ ] 404 tracking test - https://plausible.io/docs/404-error-pages-tracking
+- [x] [Outbound link tracking test](https://plausible.io/docs/outbound-link-click-tracking)
+- [x] [404 tracking test](https://plausible.io/docs/404-error-pages-tracking)
+- [ ] _waiting for_ Google Search integration
+- [ ] _waiting for_ Twitter integration
+- [ ] Data backup
+- [ ] [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
 - [ ] Tests in CI
 - [ ] HA
 

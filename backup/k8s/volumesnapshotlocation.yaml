@@ -1,0 +1,7 @@
+---
+apiVersion: velero.io/v1
+kind: VolumeSnapshotLocation
+metadata:
+  name: gcp-default
+spec:
+  provider: velero.io/gcp

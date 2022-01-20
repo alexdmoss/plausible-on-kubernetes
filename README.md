@@ -20,7 +20,7 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [ ] _waiting for_ Google Search integration
 - [ ] _waiting for_ Twitter integration
 - [ ] Data backup
-- [ ] [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
+- [ ] _done for mw_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
 - [ ] Tests in CI
 - [ ] HA
 
@@ -31,9 +31,4 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 3. Found that the separate smtp server was not required when using Sendgrid - the app I assume picks up directly from there instead of going local to the cluster.
 4. I switched out `latest` tags for pinned versions. This is good practice to get into imho - less surprises / more deterministic, versus needing to review and keep up to date yourself.
 5. I needed to edit my `Type: LoadBalancer` `Service` to `spec.externalTrafficPolicy: Local`. This affects evenness of load balancing a little, but I think this will be tolerable.
-
----
-
-## To Investigate
-
-Multi-user setup - is this an option in the self-hosted? Compare it to the cloud version to see how that works.
+6. The choice of Clickhouse database used by Plausible means you can't use the standard backup tool used by Clickhouse. I am experimenting with a Velero snapshot of the PV instead.

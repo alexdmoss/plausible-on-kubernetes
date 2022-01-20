@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velero
+  labels:
+    app: velero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: velero
+  template:
+    metadata:
+      labels:
+        app: velero
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8085"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - args:
+            - server
+          env:
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
+            - name: VELERO_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: LD_LIBRARY_PATH
+              value: /plugins
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /credentials/cloud
+          image: velero:${VELERO_VERSION}
+          imagePullPolicy: IfNotPresent
+          name: velero
+          ports:
+            - containerPort: 8085
+              name: metrics
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 750Mi
+            requests:
+              cpu: 100m
+              memory: 750Mi
+          volumeMounts:
+            - mountPath: /plugins
+              name: plugins
+            - mountPath: /scratch
+              name: scratch
+            - mountPath: /credentials
+              name: cloud-credentials
+      initContainers:
+        - image: velero-gcp-plugin:${VELERO_GCP_PLUGIN_VERSION}
+          imagePullPolicy: IfNotPresent
+          name: velero-plugin-for-gcp
+          resources: {}
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
+      restartPolicy: Always
+      securityContext: {}
+      serviceAccountName: velero-serviceaccount
+      volumes:
+        - emptyDir: {}
+          name: plugins
+        - emptyDir: {}
+          name: scratch
+        - name: cloud-credentials
+          secret:
+            secretName: velero-cloud-credentials

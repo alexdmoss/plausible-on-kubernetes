@@ -5,6 +5,9 @@ variables:
   POSTGRES_VERSION: 14.1-alpine3.15
   CLICKHOUSE_VERSION: 21.12.3.32-alpine
   PLAUSIBLE_VERSION: v1.4.3
+  VELERO_VERSION: v1.7.1
+  VELERO_GCP_PLUGIN_VERSION: v1.4.0
+  BACKUP_BUCKET: mw-plausible-backups
 
 deploy-db:
   stage: deploy
@@ -41,3 +44,16 @@ deploy-server:
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./deploy.sh plausible-server
+
+deploy-velero:
+  stage: deploy
+  image: mosstech/ci-tools:latest
+  rules:
+      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  before_script:
+    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
+    - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
+    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
+  script:
+    - cd backup/
+    - ./deploy.sh

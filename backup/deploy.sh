@@ -13,7 +13,7 @@ function main() {
 
   terraform init -backend-config=bucket="${GCP_PROJECT_ID}"-apps-tfstate -backend-config=prefix=velero
   
-  terraform plan \
+  terraform apply -auto-approve \
     -var bucket_name="${BACKUP_BUCKET}" \
     -var project_id="${GCP_PROJECT_ID}" \
     -var cluster_name="${CLUSTER_NAME}" \
@@ -23,8 +23,7 @@ function main() {
 
   kubectl apply -f ./k8s/crd.yaml
 
-  kustomize build ./k8s/ | envsubst '$BACKUP_BUCKET'
-  # kustomize build ./k8s/ | envsubst '$BACKUP_BUCKET' | kubectl apply -f -
+  kustomize build ./k8s/ | envsubst '$BACKUP_BUCKET' | kubectl apply -f -
 
   kubectl rollout status deployment velero -n=${NAMESPACE}
 

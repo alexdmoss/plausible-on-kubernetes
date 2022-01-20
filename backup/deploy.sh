@@ -11,20 +11,17 @@ function main() {
 
   pushd terraform/ >/dev/null
 
-  region=$(gcloud container clusters list --filter=NAME="${CLUSTER_NAME}" --format='value(LOCATION)')
-
   terraform init -backend-config=bucket="${GCP_PROJECT_ID}"-apps-tfstate -backend-config=prefix=velero
   
   terraform plan \
     -var bucket_name="${BACKUP_BUCKET}" \
     -var project_id="${GCP_PROJECT_ID}" \
     -var cluster_name="${CLUSTER_NAME}" \
-    -var region="${region}" \
     -var namespace="${NAMESPACE}"
 
   popd >/dev/null
 
-  # kubectl apply -f ./k8s/crd.yaml
+  kubectl apply -f ./k8s/crd.yaml
 
   kustomize build ./k8s/ | envsubst '$BACKUP_BUCKET'
   # kustomize build ./k8s/ | envsubst '$BACKUP_BUCKET' | kubectl apply -f -

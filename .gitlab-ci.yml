@@ -5,9 +5,6 @@ variables:
   POSTGRES_VERSION: 14.1-alpine3.15
   CLICKHOUSE_VERSION: 21.12.3.32-alpine
   PLAUSIBLE_VERSION: v1.4.3
-  VELERO_VERSION: v1.7.1
-  VELERO_GCP_PLUGIN_VERSION: v1.4.0
-  BACKUP_BUCKET: mw-plausible-backups
 
 deploy-db:
   stage: deploy

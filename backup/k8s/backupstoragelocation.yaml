@@ -1,9 +1,0 @@
----
-apiVersion: velero.io/v1
-kind: BackupStorageLocation
-metadata:
-  name: default
-spec:
-  provider: velero.io/gcp
-  objectStorage:
-    bucket: ${BACKUP_BUCKET}

@@ -44,17 +44,3 @@ deploy-server:
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./deploy.sh plausible-server
-
-deploy-velero:
-  stage: deploy
-  image: mosstech/ci-tools:latest
-  rules:
-      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-  before_script:
-    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
-    - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
-    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
-  script:
-    - export TF_VAR_region=${region}
-    - cd backup/
-    - ./deploy.sh

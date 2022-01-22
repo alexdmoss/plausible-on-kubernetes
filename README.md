@@ -17,10 +17,10 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [x] _edit on ingress service needed_ Check X-Forwarded-For header bit
 - [x] [Outbound link tracking test](https://plausible.io/docs/outbound-link-click-tracking)
 - [x] [404 tracking test](https://plausible.io/docs/404-error-pages-tracking)
-- [ ] _waiting for_ Google Search integration
+- [x] _[this](https://plausible.io/docs/google-search-console-integration) worked fine but takes a few days to kick in_ Google Search integration
 - [ ] _waiting for_ Twitter integration
 - [x] Data backup
-- [ ] _done for mw - works fine_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
+- [x] _done for mw - works fine_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
 - [x] Tests in CI
 - [x] _only frontend_ HA
 
@@ -52,3 +52,51 @@ Workload came up without issue, with data up to the point of last backup. Obviou
 There are caveats with this approach - I don't that much about the frequency of backup and risk of data loss (it's far from point-in-time recovery!). There are also risks associated with snapshotting the disk of a running database - if it's in the middle of a write for example.
 
 Keeping a few backups is recommended, as well as alerting on failures in those backups, and of course testing it frequently. I've got reminders in place for every 3 months.
+
+## Proxying the Request
+
+I followed the guidance [here](https://plausible.io/docs/proxy/guides/nginx) in the Plausible docs for this for NGINX, and it worked well for the site I tested it with. You can see the NGINX modifications I used in [this file](https://gitlab.com/alexos-dev/moss-work/-/blob/master/config/default.conf).
+
+Stripping this down, it amounted to more or less what the docs said:
+
+```sh
+# my cache path was different
+proxy_cache_path /var/cache/nginx/data/jscache levels=1:2 keys_zone=jscache:100m inactive=30d  use_temp_path=off max_size=100m;
+
+server {
+
+  # proxy to plausible script - my self-hosted copy
+  location = /js/visits.js {
+      proxy_pass https://plausible.alexos.dev/js/plausible.outbound-links.js;
+      proxy_buffering on;
+
+      # Cache the script for 6 hours, as long as plausible returns a valid response
+      proxy_cache jscache;
+      proxy_cache_valid 200 6h;
+      proxy_cache_use_stale updating error timeout invalid_header http_500;
+      add_header X-Cache $upstream_cache_status;
+
+      proxy_set_header Host plausible.alexos.dev;
+      proxy_ssl_name plausible.alexos.dev;
+      proxy_ssl_server_name on;
+      proxy_ssl_session_reuse off;
+  }
+
+  # proxy to plausible API - my self-hosted copy
+  location = /api/event {
+      proxy_pass https://plausible.alexos.dev/api/event;
+      proxy_buffering on;
+      proxy_http_version 1.1;
+      
+      proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Host  $host;
+
+      proxy_set_header Host plausible.alexos.dev;
+      proxy_ssl_name plausible.alexos.dev;
+      proxy_ssl_server_name on;
+      proxy_ssl_session_reuse off;
+  }
+
+}
+```

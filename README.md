@@ -21,7 +21,7 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [ ] _waiting for_ Twitter integration
 - [x] Data backup
 - [ ] _done for mw - works fine_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
-- [ ] Tests in CI
+- [x] Tests in CI
 - [x] _only frontend_ HA
 
 ## Installation Notes

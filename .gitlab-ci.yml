@@ -1,5 +1,6 @@
 stages:
 - deploy
+- smoke
 
 variables:
   POSTGRES_VERSION: 14.1-alpine3.15
@@ -41,3 +42,9 @@ deploy-server:
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./deploy.sh plausible-server
+
+smoke-test:
+  stage: smoke
+  image: mosstech/ci-tools:latest
+  script:
+    - ./smoke-test.sh

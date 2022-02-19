@@ -12,6 +12,7 @@ deploy-db:
   image: mosstech/ci-tools:latest
   rules:
       - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
   before_script:
     - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
@@ -24,6 +25,7 @@ deploy-events-db:
   image: mosstech/ci-tools:latest
   rules:
       - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
   before_script:
     - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
@@ -36,6 +38,7 @@ deploy-server:
   image: mosstech/ci-tools:latest
   rules:
       - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
   before_script:
     - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")

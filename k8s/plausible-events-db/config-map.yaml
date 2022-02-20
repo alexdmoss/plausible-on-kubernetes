@@ -6,6 +6,10 @@ metadata:
 data:
   clickhouse-config.xml: |
     <yandex>
+
+        <!-- disable IPv6 -->
+        <listen_host>127.0.0.1</listen_host>
+
         <logger>
             <level>warning</level>
             <console>true</console>

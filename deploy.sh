@@ -38,7 +38,7 @@ function main() {
   if [[ ${action} == "plausible-server" ]] || [[ ${action} == "ALL" ]]; then
     _console_msg "Deploying plausible-server ..." INFO true
     kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_VERSION" | kubectl apply -f -
-    kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=120s
+    kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=180s
   fi
 
   popd >/dev/null

@@ -53,6 +53,42 @@ There are caveats with this approach - I don't that much about the frequency of 
 
 Keeping a few backups is recommended, as well as alerting on failures in those backups, and of course testing it frequently. I've got reminders in place for every 3 months.
 
+### Moving between Projects
+
+> Still not properly codified - sorry!
+
+The steps below allowed me to restore into a new GCP project within the same namespace - a more interesting test:
+
+1. Manually grant the new velero Service Account access to the old bucket
+2. Manually grant the new velero Service Account the custom role for handling compute snapshots in the old project
+3. Create a second backupLocation which I named `old` (matters for the `jq` below) - see yaml below
+4. Edited the `VolumeStorageLocation` to make it aware of the old project - `.spec.config.project=old-project`
+5. Restore as usual:
+
+```sh
+velero client config set namespace=velero
+# note storageLocation==old must match backuplocation above if not using shared bucket
+BACKUP_NAME=$(velero backup get --output=json | jq -r '[ .items[] | select(.spec.storageLocation=="old") | select(.status.phase=="Completed") | {"name": .metadata.name, "startTimestamp": (.status.startTimestamp | fromdateiso8601)} ]| sort_by(.startTimestamp)[-1].name')
+
+# ... depending on state of previous deployment, may need to delete old PVs
+velero restore create --from-backup "${BACKUP_NAME}" --include-resources persistentvolumeclaims,persistentvolumes --include-namespaces=plausible --restore-volumes=true
+```
+
+Additional backup location:
+
+```yaml
+---
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: old
+  namespace: velero
+spec:
+  provider: velero.io/gcp
+  objectStorage:
+    bucket: ${OLD_BACKUP_BUCKET}
+```
+
 ## Proxying the Request
 
 I followed the guidance [here](https://plausible.io/docs/proxy/guides/nginx) in the Plausible docs for this for NGINX, and it worked well for the site I tested it with. You can see the NGINX modifications I used in [this file](https://gitlab.com/alexos-dev/moss-work/-/blob/master/config/default.conf).

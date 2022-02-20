@@ -67,6 +67,4 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 128Mi
-          limits:
-            storage: 15Gi
+            storage: 20Gi

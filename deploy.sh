@@ -25,7 +25,7 @@ function main() {
 
   if [[ "${action}" == "plausible-db" ]] || [[ ${action} == "ALL" ]]; then
     _console_msg "Deploying plausible-db ..." INFO true
-    kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION" | kubectl apply -f -
+    kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION \$POSTGRES_USER" | kubectl apply -f -
     kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
   fi
 

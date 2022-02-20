@@ -47,7 +47,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -U postgres
+                - pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 20
             failureThreshold: 6
             periodSeconds: 10
@@ -56,7 +56,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -U postgres
+                - pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 10

@@ -39,55 +39,41 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 
 Whilst backing up the Postgres database is possible with a range of options, the Clickhouse DB is a little more unusual and the type of tables used precent some of their tools being used. [This github discussion](https://github.com/plausible/analytics/discussions/1226)  provides some good background.
 
-I solved this for my needs using [Velero](https://velero.io/) and its ability to backup PVs and PVCs, with its backups saved to a GCS bucket. I've tested this (only ...) once (at time of writing ...) by restoring into another namespace as follows:
+I solved this for my needs using [Velero](https://velero.io/) and its ability to backup PVs and PVCs, with its backups saved to a GCS bucket.
+
+There are caveats with this approach - I don't that much about the frequency of backup and risk of data loss (it's far from point-in-time recovery!). There are also risks associated with snapshotting the disk of a running database - if it's in the middle of a write for example.
+
+Keeping a few backups is recommended, as well as **alerting on failures in those backups**, and of course testing it frequently. I've got reminders in place every 3 months.
+
+### Migration to Another Namespace
 
 ```bash
 kubectl create ns plausible-test
+# see below for how to set $BACKUP_NAME
 velero restore create --from-backup $BACKUP_NAME --include-resources persistentvolumeclaims,persistentvolumes --include-namespaces=plausible --namespace-mappings plausible:plausible-test --restore-volumes=true
 # and then running deploy.sh against the plausible-test namespace instead
 ```
 
-Workload came up without issue, with data up to the point of last backup. Obviously in a real recovery scenario this would be run against the original namespace name but in a new Kubernetes cluster.
+### Migration to A New Cluster
 
-There are caveats with this approach - I don't that much about the frequency of backup and risk of data loss (it's far from point-in-time recovery!). There are also risks associated with snapshotting the disk of a running database - if it's in the middle of a write for example.
+The bucket I'm using for snapshots is shared between both "old" and "new" clusters in this scenario. This simplifies things - if you don't want to do that then you'll need to tell the new cluster about your "old" `BackupStorageLocation` and then edit the `VolumeStorageLocation` to make it aware of the old project - `.spec.config.project=old-project` (I did it this way originally - it works fine)
 
-Keeping a few backups is recommended, as well as alerting on failures in those backups, and of course testing it frequently. I've got reminders in place for every 3 months.
+The following picks the last successful backup - but watch out for backups being taken on your **new** cluster if you're sharing the location - you may wish to look manually:
 
-### Moving between Projects
-
-> Still not properly codified - sorry!
-
-The steps below allowed me to restore into a new GCP project within the same namespace - a more interesting test:
-
-1. Manually grant the new velero Service Account access to the old bucket
-2. Manually grant the new velero Service Account the custom role for handling compute snapshots in the old project
-3. Create a second backupLocation which I named `old` (matters for the `jq` below) - see yaml below
-4. Edited the `VolumeStorageLocation` to make it aware of the old project - `.spec.config.project=old-project`
-5. Restore as usual:
-
-```sh
+```bash
 velero client config set namespace=velero
-# note storageLocation==old must match backuplocation above if not using a shared bucket
-BACKUP_NAME=$(velero backup get --output=json | jq -r '[ .items[] | select(.spec.storageLocation=="old") | select(.status.phase=="Completed") | {"name": .metadata.name, "startTimestamp": (.status.startTimestamp | fromdateiso8601)} ]| sort_by(.startTimestamp)[-1].name')
+# add ` | select(.spec.storageLocation=="old")` if using a different bucket between clusters
+BACKUP_NAME=$(velero backup get --output=json | jq -r '[ .items[] | select(.status.phase=="Completed") | {"name": .metadata.name, "startTimestamp": (.status.startTimestamp | fromdateiso8601)} ]| sort_by(.startTimestamp)[-1].name')
+```
 
-# ... depending on state of previous deployment, may need to delete old PVs
+You then restore with:
+
+```bash
+# ... depending on state of previous deployment, may need to delete old PVs first
 velero restore create --from-backup "${BACKUP_NAME}" --include-resources persistentvolumeclaims,persistentvolumes --include-namespaces=plausible --restore-volumes=true
 ```
 
-Additional backup location:
-
-```yaml
 ---
-apiVersion: velero.io/v1
-kind: BackupStorageLocation
-metadata:
-  name: old
-  namespace: velero
-spec:
-  provider: velero.io/gcp
-  objectStorage:
-    bucket: ${OLD_BACKUP_BUCKET}
-```
 
 ## Proxying the Request
 

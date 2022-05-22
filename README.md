@@ -67,7 +67,7 @@ The steps below allowed me to restore into a new GCP project within the same nam
 
 ```sh
 velero client config set namespace=velero
-# note storageLocation==old must match backuplocation above if not using shared bucket
+# note storageLocation==old must match backuplocation above if not using a shared bucket
 BACKUP_NAME=$(velero backup get --output=json | jq -r '[ .items[] | select(.spec.storageLocation=="old") | select(.status.phase=="Completed") | {"name": .metadata.name, "startTimestamp": (.status.startTimestamp | fromdateiso8601)} ]| sort_by(.startTimestamp)[-1].name')
 
 # ... depending on state of previous deployment, may need to delete old PVs

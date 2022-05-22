@@ -21,3 +21,5 @@ gcloud secrets create PLAUSIBLE_TWITTER_CONSUMER_KEY --project="${GCP_PROJECT_ID
 gcloud secrets create PLAUSIBLE_TWITTER_CONSUMER_SECRET --project="${GCP_PROJECT_ID}"
 gcloud secrets create PLAUSIBLE_TWITTER_ACCESS_TOKEN --project="${GCP_PROJECT_ID}"
 gcloud secrets create PLAUSIBLE_TWITTER_ACCESS_TOKEN_SECRET --project="${GCP_PROJECT_ID}"
+
+gcloud secrets create PLAUSIBLE_SENDGRID_KEY --project="${GCP_PROJECT_ID}"

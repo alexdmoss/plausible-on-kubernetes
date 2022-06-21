@@ -4,6 +4,10 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 
 ---
 
+> Blog post that explains how to use this repo in more detail: https://alexos.dev/2022/03/26/hosting-plausible-analytics-on-kubernetes/
+
+---
+
 ## To Do
 
 - [x] Sort out secrets
@@ -13,16 +17,16 @@ Repo for self-hosting Plausible on a Kubernetes cluster
 - [x] Test email works
 - [x] Try without SMTP relay process
 - [x] Deal with latest tags
-- [-] _skipped: seems to work fine with the DB-IP option_ MaxMind GeoIP
-- [x] _edit on ingress service needed_ Check X-Forwarded-For header bit
+- [-] _skipped: seems to work fine with the DB-IP option:_ MaxMind GeoIP
+- [x] _edit on ingress service needed:_ Check X-Forwarded-For header bit
 - [x] [Outbound link tracking test](https://plausible.io/docs/outbound-link-click-tracking)
 - [x] [404 tracking test](https://plausible.io/docs/404-error-pages-tracking)
-- [x] _[this](https://plausible.io/docs/google-search-console-integration) worked fine but takes a few days to kick in_ Google Search integration
-- [ ] _waiting for_ Twitter integration
+- [x] _[this](https://plausible.io/docs/google-search-console-integration) worked fine but takes a few days to kick in:_ Google Search integration
+- [ ] _waiting for:_ Twitter integration
 - [x] Data backup
-- [x] _done for mw - works fine_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
+- [x] _done for mw - works fine:_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
 - [x] Tests in CI
-- [x] _only frontend_ HA
+- [x] _only frontend:_ HA
 
 ## Installation Notes
 

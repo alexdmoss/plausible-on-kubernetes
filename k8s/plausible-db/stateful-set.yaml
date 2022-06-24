@@ -11,6 +11,7 @@ spec:
   template:
     spec:
       restartPolicy: Always
+      priorityClassName: has-volume-constraints
       securityContext:
         runAsUser: 70
         runAsGroup: 70

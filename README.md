@@ -60,21 +60,31 @@ velero restore create --from-backup $BACKUP_NAME --include-resources persistentv
 
 ### Migration to A New Cluster
 
-The bucket I'm using for snapshots is shared between both "old" and "new" clusters in this scenario. This simplifies things - if you don't want to do that then you'll need to tell the new cluster about your "old" `BackupStorageLocation` and then edit the `VolumeStorageLocation` to make it aware of the old project - `.spec.config.project=old-project` (I did it this way originally - it works fine)
+The bucket I'm using for snapshots is shared between both "old" and "new" clusters in this scenario. This simplifies things a little, but still requires a bit of micromanagement to deal with the snapshots being in the old project. I'm sure I could improve this with a bit of thought.
 
-The following picks the last successful backup - but watch out for backups being taken on your **new** cluster if you're sharing the location - you may wish to look manually:
+> If you use different projects, be sure to also setup a `BackupStorageLocation` pointing to the old project too
+
+The following picks the last successful backup - but if using a shared project then be sure to check the backup is from the old project rather than a newly created one in the blank cluster:
 
 ```bash
 velero client config set namespace=velero
 # add ` | select(.spec.storageLocation=="old")` if using a different bucket between clusters
 BACKUP_NAME=$(velero backup get --output=json | jq -r '[ .items[] | select(.status.phase=="Completed") | {"name": .metadata.name, "startTimestamp": (.status.startTimestamp | fromdateiso8601)} ]| sort_by(.startTimestamp)[-1].name')
+velero backup describe ${BACKUP_NAME}
+# check the number of items backed up from this output, adapting the above to the next snapshot back if it's 0
 ```
 
 You then restore with:
 
 ```bash
 # ... depending on state of previous deployment, may need to delete old PVs first
+kubectl create ns plausible
+kns plausible
+k edit volumesnapshotlocation gcp-default
+# set .spec.config.project=old-project
 velero restore create --from-backup "${BACKUP_NAME}" --include-resources persistentvolumeclaims,persistentvolumes --include-namespaces=plausible --restore-volumes=true
+# check the describe output to confirm it has restored correctly
+# revert the edit to the volumesnapshotlocation so that new backups are in the new project
 ```
 
 ---

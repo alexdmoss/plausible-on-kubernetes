@@ -2,6 +2,8 @@
 
 if [[ -z ${GCP_PROJECT_ID} ]]; then echo "-> [ERROR] GCP_PROJECT_ID not set"; exit 1; fi
 
+gcloud services enable secretmanager.googleapis.com --project="${PROJECT_ID}"
+
 gcloud secrets create PLAUSIBLE_ADMIN_USER_EMAIL --project="${GCP_PROJECT_ID}"
 gcloud secrets create PLAUSIBLE_ADMIN_USER_NAME --project="${GCP_PROJECT_ID}"
 gcloud secrets create PLAUSIBLE_ADMIN_USER_PWD --project="${GCP_PROJECT_ID}"

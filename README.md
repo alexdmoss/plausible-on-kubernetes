@@ -80,7 +80,7 @@ You then restore with:
 # ... depending on state of previous deployment, may need to delete old PVs first
 kubectl create ns plausible
 kns plausible
-k edit volumesnapshotlocation gcp-default
+k edit volumesnapshotlocation -n=velero gcp-default
 # set .spec.config.project=old-project
 velero restore create --from-backup "${BACKUP_NAME}" --include-resources persistentvolumeclaims,persistentvolumes --include-namespaces=plausible --restore-volumes=true
 # check the describe output to confirm it has restored correctly

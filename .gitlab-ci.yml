@@ -7,6 +7,7 @@ variables:
   CLICKHOUSE_VERSION: 22.5.1-alpine
   PLAUSIBLE_VERSION: v1.4.4
 
+
 deploy-db:
   stage: deploy
   image: mosstech/ci-tools:latest
@@ -45,6 +46,7 @@ deploy-server:
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./deploy.sh plausible-server
+
 
 smoke-test:
   stage: smoke

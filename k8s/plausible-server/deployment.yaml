@@ -37,9 +37,9 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             limits:
-              memory: 500Mi
+              memory: 100Mi
             requests:
-              memory: 500Mi
+              memory: 100Mi
               cpu: 10m
       containers:
         - name: plausible

@@ -43,10 +43,10 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             limits:
-              memory: 500Mi
+              memory: 1Gi
             requests:
-              memory: 500Mi
-              cpu: 10m
+              memory: 1Gi
+              cpu: 100m
           readinessProbe:
             httpGet:
               path: /ping

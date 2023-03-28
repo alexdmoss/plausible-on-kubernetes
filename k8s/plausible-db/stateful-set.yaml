@@ -37,11 +37,10 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             limits:
-              memory: 1Gi
-              cpu: 1000m
+              memory: 200Mi
             requests:
-              memory: 65Mi
-              cpu: 15m
+              memory: 50Mi
+              cpu: 10m
           readinessProbe:
             exec:
               command:

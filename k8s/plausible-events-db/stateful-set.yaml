@@ -22,16 +22,14 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8123
+              name: http
+            - containerPort: 9000
+              name: native
           volumeMounts:
             - name: data
               mountPath: /var/lib/clickhouse
             - name: config
-              mountPath: /etc/clickhouse-server/config.d/logging.xml
-              subPath: clickhouse-config.xml
-              readOnly: true
-            - name: config
-              mountPath: /etc/clickhouse-server/users.d/logging.xml"
-              subPath: clickhouse-user-config.xml
+              mountPath: /etc/clickhouse-server
               readOnly: true
           envFrom:
             - secretRef:
@@ -67,6 +65,11 @@ spec:
         - name: config
           configMap:
             name: plausible-events-db-config
+            items:
+            - key: config.xml
+              path: config.xml
+            - key: users.xml
+              path: users.xml
   volumeClaimTemplates:
     - metadata:
         name: data

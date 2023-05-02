@@ -41,6 +41,9 @@ spec:
               value: plausible
           securityContext:
             allowPrivilegeEscalation: false
+            runAsUser: 101
+            runAsGroup: 101
+            fsGroup: 101
           resources:
             limits:
               memory: 1Gi

@@ -31,6 +31,8 @@ spec:
             - name: config
               mountPath: /etc/clickhouse-server
               readOnly: true
+            - name: users-d
+              mountPath: /etc/clickhouse-server/users.d
           envFrom:
             - secretRef:
                 name: plausible-config
@@ -70,6 +72,8 @@ spec:
               path: config.xml
             - key: users.xml
               path: users.xml
+        - name: users-d
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data

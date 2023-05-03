@@ -1,6 +1,6 @@
 # plausible-on-kubernetes
 
-Repo for self-hosting Plausible on a Kubernetes cluster.
+Repo for self-hosting Plausible on a Kubernetes cluster
 
 ---
 

@@ -30,7 +30,7 @@ spec:
               mountPath: /var/lib/clickhouse
             - name: config
               mountPath: /etc/clickhouse-server
-              readOnly: true
+              # readOnly: true
             - name: users-d
               mountPath: /etc/clickhouse-server/users.d
           envFrom:

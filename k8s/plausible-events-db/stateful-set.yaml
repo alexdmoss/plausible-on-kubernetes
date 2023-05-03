@@ -29,10 +29,13 @@ spec:
             - name: data
               mountPath: /var/lib/clickhouse
             - name: config
-              mountPath: /etc/clickhouse-server
-              # readOnly: true
-            - name: users-d
-              mountPath: /etc/clickhouse-server/users.d
+              mountPath: /etc/clickhouse-server/config.d/logging.xml
+              subPath: clickhouse-config.xml
+              readOnly: true
+            - name: config
+              mountPath: /etc/clickhouse-server/users.d/logging.xml"
+              subPath: clickhouse-user-config.xml
+              readOnly: true
           envFrom:
             - secretRef:
                 name: plausible-config
@@ -67,12 +70,6 @@ spec:
         - name: config
           configMap:
             name: plausible-events-db-config
-            items:
-            - key: config.xml
-              path: config.xml
-            - key: users.xml
-              path: users.xml
-        - name: users-d
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:

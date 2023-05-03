@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: plausible-events-db-config
 data:
-  config.xml: |
+  clickhouse-config.xml: |
     <yandex>
 
         <!-- disable IPv6 -->
@@ -23,7 +23,7 @@ data:
         <metric_log remove="remove"/>
         <asynchronous_metric_log remove="remove"/>
     </yandex>
-  users.xml: |
+  clickhouse-user-config.xml: |
     <yandex>
         <profiles>
             <default>

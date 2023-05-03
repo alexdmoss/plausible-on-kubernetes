@@ -4,7 +4,7 @@ stages:
 
 variables:
   POSTGRES_VERSION: 14.3-alpine3.15
-  CLICKHOUSE_VERSION: 23.4.1-alpine
+  CLICKHOUSE_VERSION: 22.5.1-alpine
   PLAUSIBLE_VERSION: v1.5.1
 
 

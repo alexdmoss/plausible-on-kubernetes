@@ -11,6 +11,9 @@ spec:
   template:
     spec:
       restartPolicy: Always
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+      terminationGracePeriodSeconds: 25
       priorityClassName: has-volume-constraints
       securityContext:
         runAsUser: 70

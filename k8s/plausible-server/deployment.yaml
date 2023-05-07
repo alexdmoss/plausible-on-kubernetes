@@ -13,6 +13,9 @@ spec:
   template:
     spec:
       restartPolicy: Always
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+      terminationGracePeriodSeconds: 25
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000

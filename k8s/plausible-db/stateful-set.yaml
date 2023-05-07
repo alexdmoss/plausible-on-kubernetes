@@ -41,10 +41,10 @@ spec:
           resources:
             # autopilot minimums
             limits:
-              memory: 500Mi
+              memory: 512Mi
               cpu: 250m
             requests:
-              memory: 500Mi
+              memory: 512Mi
               cpu: 250m
           readinessProbe:
             exec:

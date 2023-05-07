@@ -56,10 +56,10 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             limits:
-              memory: 500Mi
+              memory: 512Mi
               cpu: 250m
             requests:
-              memory: 500Mi
+              memory: 512Mi
               cpu: 250m
           readinessProbe:
             httpGet:

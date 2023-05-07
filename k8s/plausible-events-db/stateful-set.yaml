@@ -73,7 +73,6 @@ spec:
         - name: config
           configMap:
             name: plausible-events-db-config
-          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data

@@ -33,7 +33,7 @@ spec:
               subPath: clickhouse-config.xml
               readOnly: true
             - name: config
-              mountPath: /etc/clickhouse-server/users.d/logging.xml"
+              mountPath: /etc/clickhouse-server/users.d/logging.xml
               subPath: clickhouse-user-config.xml
               readOnly: true
           envFrom:
@@ -42,6 +42,8 @@ spec:
           env:
             - name: CLICKHOUSE_DB
               value: plausible
+            - name: CLICKHOUSE_LISTEN_HOST
+              value: "0.0.0.0"
           securityContext:
             allowPrivilegeEscalation: false
             runAsUser: 101
@@ -49,9 +51,10 @@ spec:
           resources:
             limits:
               memory: 1Gi
+              cpu: 250m     # autopilot minimum
             requests:
               memory: 1Gi
-              cpu: 100m
+              cpu: 250m     # autopilot minimum
           readinessProbe:
             httpGet:
               path: /ping

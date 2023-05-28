@@ -7,7 +7,6 @@ variables:
   CLICKHOUSE_VERSION: 23.4.2.11-alpine
   PLAUSIBLE_VERSION: v1.4.4
 
-
 deploy-db:
   stage: deploy
   image: mosstech/ci-tools:latest

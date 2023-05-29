@@ -54,10 +54,10 @@ spec:
           resources:
             limits:
               memory: 1Gi
-              cpu: 250m     # autopilot minimum
+              cpu: 250m
             requests:
               memory: 1Gi
-              cpu: 250m     # autopilot minimum
+              cpu: 50m
           readinessProbe:
             httpGet:
               path: /ping

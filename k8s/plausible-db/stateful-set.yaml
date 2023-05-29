@@ -39,13 +39,12 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
           resources:
-            # autopilot minimums
             limits:
-              memory: 512Mi
-              cpu: 250m
+              memory: 200Mi
+              cpu: 100m
             requests:
-              memory: 512Mi
-              cpu: 250m
+              memory: 200Mi
+              cpu: 10m
           readinessProbe:
             exec:
               command:

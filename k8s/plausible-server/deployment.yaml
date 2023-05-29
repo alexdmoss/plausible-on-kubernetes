@@ -56,11 +56,11 @@ spec:
             allowPrivilegeEscalation: false
           resources:
             limits:
-              memory: 512Mi
+              memory: 250Mi
               cpu: 250m
             requests:
-              memory: 512Mi
-              cpu: 250m
+              memory: 250Mi
+              cpu: 50m
           readinessProbe:
             httpGet:
               path: /api/health

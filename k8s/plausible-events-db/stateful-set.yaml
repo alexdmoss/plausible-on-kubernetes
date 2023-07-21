@@ -51,6 +51,8 @@ spec:
             allowPrivilegeEscalation: false
             runAsUser: 101
             runAsGroup: 101
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           resources:
             limits:
               memory: 1Gi

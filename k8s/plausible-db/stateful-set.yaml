@@ -19,6 +19,11 @@ spec:
         runAsUser: 70
         runAsGroup: 70
         fsGroup: 70
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      - name: run-volume
+        emptyDir: {}
       containers:
         - name: plausible-db
           image: postgres:$POSTGRES_VERSION
@@ -28,6 +33,10 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: run-volume
+              mountPath: /var/run/postgresql
           envFrom:
             - secretRef:
                 name: plausible-config
@@ -38,6 +47,8 @@ spec:
               value: /var/lib/postgresql/data/pgdata
           securityContext:
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
           resources:
             limits:
               memory: 200Mi

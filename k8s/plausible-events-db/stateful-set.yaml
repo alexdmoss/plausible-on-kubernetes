@@ -31,8 +31,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/clickhouse
-            - name: clickhouse
-              mountPath: /etc/clickhouse-server
             - name: config
               mountPath: /etc/clickhouse-server/config.d/logging.xml
               subPath: clickhouse-config.xml
@@ -54,7 +52,6 @@ spec:
             runAsUser: 101
             runAsGroup: 101
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
           resources:
             limits:
               memory: 1Gi
@@ -77,8 +74,6 @@ spec:
             failureThreshold: 3
             periodSeconds: 10
       volumes:
-        - name: clickhouse
-          emptyDir: {}
         - name: config
           configMap:
             name: plausible-events-db-config

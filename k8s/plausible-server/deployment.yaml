@@ -40,6 +40,9 @@ spec:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+              - ALL
       containers:
         - name: plausible
           image: plausible/analytics:$PLAUSIBLE_VERSION
@@ -58,6 +61,9 @@ spec:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+              - ALL
           resources:
             limits:
               memory: 250Mi

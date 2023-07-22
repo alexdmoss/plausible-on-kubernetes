@@ -52,6 +52,9 @@ spec:
             runAsUser: 101
             runAsGroup: 101
             runAsNonRoot: true
+            capabilities:
+              drop:
+              - ALL
           resources:
             limits:
               memory: 1Gi

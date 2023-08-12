@@ -47,36 +47,15 @@ function main() {
 
 }
 
-
 function setup_secrets() {
 
   _console_msg "Creating secrets ..." INFO true
 
   pushd "$(dirname "${BASH_SOURCE[0]}")/" > /dev/null
 
-  ADMIN_USER_EMAIL=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_EMAIL" --project="${GCP_PROJECT_ID}")
-  ADMIN_USER_NAME=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_NAME" --project="${GCP_PROJECT_ID}")
-  ADMIN_USER_PWD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_ADMIN_USER_PWD" --project="${GCP_PROJECT_ID}")
-  SECRET_KEY_BASE=$(gcloud secrets versions access latest --secret="PLAUSIBLE_SECRET_KEY_BASE" --project="${GCP_PROJECT_ID}")
-
-  POSTGRES_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_USER" --project="${GCP_PROJECT_ID}")
-  POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_POSTGRES_PASSWORD" --project="${GCP_PROJECT_ID}")
-  CLICKHOUSE_USER=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_USER" --project="${GCP_PROJECT_ID}")
-  CLICKHOUSE_PASSWORD=$(gcloud secrets versions access latest --secret="PLAUSIBLE_CLICKHOUSE_PASSWORD" --project="${GCP_PROJECT_ID}")
-
-  SENDGRID_KEY=$(gcloud secrets versions access latest --secret="PLAUSIBLE_SENDGRID_KEY" --project="${GCP_PROJECT_ID}")
-
-  GOOGLE_CLIENT_ID=$(gcloud secrets versions access latest --secret="PLAUSIBLE_GOOGLE_CLIENT_ID" --project="${GCP_PROJECT_ID}")
-  GOOGLE_CLIENT_SECRET=$(gcloud secrets versions access latest --secret="PLAUSIBLE_GOOGLE_CLIENT_SECRET" --project="${GCP_PROJECT_ID}")
-
-  TWITTER_CONSUMER_KEY=$(gcloud secrets versions access latest --secret="PLAUSIBLE_TWITTER_CONSUMER_KEY" --project="${GCP_PROJECT_ID}")
-  TWITTER_CONSUMER_SECRET=$(gcloud secrets versions access latest --secret="PLAUSIBLE_TWITTER_CONSUMER_SECRET" --project="${GCP_PROJECT_ID}")
-  TWITTER_ACCESS_TOKEN=$(gcloud secrets versions access latest --secret="PLAUSIBLE_TWITTER_ACCESS_TOKEN" --project="${GCP_PROJECT_ID}")
-  TWITTER_ACCESS_TOKEN_SECRET=$(gcloud secrets versions access latest --secret="PLAUSIBLE_TWITTER_ACCESS_TOKEN_SECRET" --project="${GCP_PROJECT_ID}")
-
-  export ADMIN_USER_EMAIL ADMIN_USER_NAME ADMIN_USER_PWD SECRET_KEY_BASE SENDGRID_KEY GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET
-  export POSTGRES_USER POSTGRES_PASSWORD CLICKHOUSE_USER CLICKHOUSE_PASSWORD
-  export TWITTER_CONSUMER_KEY TWITTER_CONSUMER_SECRET TWITTER_ACCESS_TOKEN TWITTER_ACCESS_TOKEN_SECRET
+  plausible_secrets=$(gcloud secrets versions access latest --secret="PLAUSIBLE" --project="${GCP_PROJECT_ID}")
+  # shellcheck disable=2046
+  export $(echo "${plausible_secrets}" | xargs)
 
   cat plausible-conf.env | \
     envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE" | \

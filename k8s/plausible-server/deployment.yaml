@@ -66,10 +66,10 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 100Mi
+              memory: 200Mi
               cpu: 100m
             requests:
-              memory: 50Mi
+              memory: 200Mi
               cpu: 10m
           readinessProbe:
             httpGet:
@@ -84,4 +84,10 @@ spec:
               port: 8000
             initialDelaySeconds: 45
             failureThreshold: 3
-            periodSeconds: 10 
+            periodSeconds: 10
+          volumeMounts:
+            - name: tzdata
+              mountPath: /app/lib/tzdata-1.1.0/priv/
+      volumes:
+        - name: tzdata
+          emptyDir: {}

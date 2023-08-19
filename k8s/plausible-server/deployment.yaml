@@ -39,7 +39,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
               - ALL
@@ -60,7 +60,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
               - ALL
@@ -85,9 +85,3 @@ spec:
             initialDelaySeconds: 45
             failureThreshold: 3
             periodSeconds: 10
-          volumeMounts:
-            - name: tzdata
-              mountPath: /app/lib/tzdata-1.1.0/priv/
-      volumes:
-        - name: tzdata
-          emptyDir: {}

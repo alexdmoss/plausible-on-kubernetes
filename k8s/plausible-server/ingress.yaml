@@ -1,24 +1,17 @@
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
 metadata:
-  name: plausible
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: nginx
+  name: photos-alexandlou
+  namespace: photos-alexandlou
 spec:
-  tls:
-    - secretName: plausible-tls
-      hosts:
-        - plausible.alexos.dev
+  parentRefs:
+  - kind: Gateway
+    name: shared-gateway
+    namespace: ingress
+  hostnames:
+  - plausible.alexos.dev
   rules:
-    - host: plausible.alexos.dev
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: plausible
-                port:
-                  name: http
+  - backendRefs:
+    - name: plausible
+      port: 8080

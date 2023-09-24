@@ -74,6 +74,7 @@ spec:
             requests:
               memory: 400Mi
               cpu: 10m
+          # needed to comment out the probes last time to get it to deploy - bringing back in though
           readinessProbe:
             httpGet:
               path: /api/health

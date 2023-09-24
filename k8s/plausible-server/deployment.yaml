@@ -74,7 +74,7 @@ spec:
             requests:
               memory: 400Mi
               cpu: 10m
-          # needed to comment out the probes last time to get it to deploy - bringing back in though
+          # needed to comment out the probes last time to get it to deploy - turned out to need longer delay for liveness
           readinessProbe:
             httpGet:
               path: /api/health
@@ -86,6 +86,6 @@ spec:
             httpGet:
               path: /api/health
               port: 8000
-            initialDelaySeconds: 45
+            initialDelaySeconds: 60
             failureThreshold: 3
             periodSeconds: 10

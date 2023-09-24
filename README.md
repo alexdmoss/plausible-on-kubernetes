@@ -4,7 +4,7 @@ Repo for self-hosting Plausible on a Kubernetes cluster.
 
 ---
 
-> Blog post that explains how to use this repo in more detail: https://alexos.dev/2022/03/26/hosting-plausible-analytics-on-kubernetes/.
+> Blog post that explains how to use this repo in more detail: https://alexos.dev/2022/03/26/hosting-plausible-analytics-on-kubernetes/
 
 ---
 

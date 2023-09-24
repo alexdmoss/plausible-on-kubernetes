@@ -11,6 +11,9 @@ spec:
       maxSurge: 1
       maxUnavailable: 1
   template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       restartPolicy: Always
       nodeSelector:

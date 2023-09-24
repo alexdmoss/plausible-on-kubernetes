@@ -9,6 +9,9 @@ spec:
     type: RollingUpdate
   serviceName: plausible-db
   template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       restartPolicy: Always
       nodeSelector:

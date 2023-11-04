@@ -69,11 +69,11 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 400Mi
-              cpu: 100m
+              memory: 800Mi
+              cpu: 200m
             requests:
-              memory: 400Mi
-              cpu: 10m
+              memory: 800Mi
+              cpu: 100m
           # needed to comment out the probes last time to get it to deploy - turned out to need longer delay for liveness
           readinessProbe:
             httpGet:

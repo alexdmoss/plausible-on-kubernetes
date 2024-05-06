@@ -1,16 +1,16 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: plausible
 
-commonLabels:
-  name: events-db
 
-bases:
-  - ../base/
 
 resources:
-  - config-map.yaml
-  - service.yaml
-  - stateful-set.yaml
+- config-map.yaml
+- service.yaml
+- stateful-set.yaml
+- ../base/
+labels:
+- includeSelectors: true
+  pairs:
+    name: events-db

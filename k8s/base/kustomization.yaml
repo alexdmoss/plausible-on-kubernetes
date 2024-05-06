@@ -1,13 +1,14 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: plausible
 
-commonLabels:
-  app: plausible
 
 secretGenerator:
-  - name: plausible-config
-    envs:
-      - plausible-conf.env.secret
+- envs:
+  - plausible-conf.env.secret
+  name: plausible-config
+labels:
+- includeSelectors: true
+  pairs:
+    app: plausible

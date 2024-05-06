@@ -1,16 +1,16 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: plausible
 
-commonLabels:
-  app: plausible
-  name: plausible-db
 
-bases:
-  - ../base/
 
 resources:
-  - service.yaml
-  - stateful-set.yaml
+- service.yaml
+- stateful-set.yaml
+- ../base/
+labels:
+- includeSelectors: true
+  pairs:
+    app: plausible
+    name: plausible-db

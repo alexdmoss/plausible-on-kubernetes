@@ -5,7 +5,7 @@ NAMESPACE=plausible
 
 function main() {
 
-  _assert_variables_set GCP_PROJECT_ID POSTGRES_VERSION CLICKHOUSE_VERSION PLAUSIBLE_VERSION
+  _assert_variables_set GCP_PROJECT_ID POSTGRES_IMAGE CLICKHOUSE_IMAGE PLAUSIBLE_IMAGE
 
   if [[ -z ${1:-} ]]; then
     action="ALL"
@@ -25,19 +25,19 @@ function main() {
 
   if [[ "${action}" == "plausible-db" ]] || [[ ${action} == "ALL" ]]; then
     _console_msg "Deploying plausible-db ..." INFO true
-    kustomize build ./plausible-db/ | envsubst "\$POSTGRES_VERSION \$POSTGRES_USER" | kubectl apply -f -
+    kustomize build ./plausible-db/ | envsubst "\$POSTGRES_IMAGE \$POSTGRES_USER" | kubectl apply -f -
     kubectl rollout status sts/plausible-db -n=${NAMESPACE} --timeout=120s
   fi
 
   if [[ ${action} == "plausible-events-db" ]] || [[ ${action} == "ALL" ]]; then
     _console_msg "Deploying plausible-events-db ..." INFO true
-    kustomize build ./plausible-events-db/ | envsubst "\$CLICKHOUSE_VERSION" | kubectl apply -f -
+    kustomize build ./plausible-events-db/ | envsubst "\$CLICKHOUSE_IMAGE" | kubectl apply -f -
     kubectl rollout status sts/plausible-events-db -n=${NAMESPACE} --timeout=120s
   fi
 
   if [[ ${action} == "plausible-server" ]] || [[ ${action} == "ALL" ]]; then
     _console_msg "Deploying plausible-server ..." INFO true
-    kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_VERSION" | kubectl apply -f -
+    kustomize build ./plausible-server/ | envsubst "\$PLAUSIBLE_IMAGE" | kubectl apply -f -
     kubectl rollout status deploy/plausible -n=${NAMESPACE} --timeout=180s
   fi
 
@@ -58,7 +58,8 @@ function setup_secrets() {
   export $(echo "${plausible_secrets}" | xargs)
 
   cat plausible-conf.env | \
-    envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD \$BASE_URL \$SECRET_KEY_BASE" | \
+    envsubst "\$ADMIN_USER_EMAIL \$ADMIN_USER_NAME \$ADMIN_USER_PWD" | \
+    envsubst "\$BASE_URL \$SECRET_KEY_BASE \$TOTP_VAULT_KEY" | \
     envsubst "\$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD" | \
     envsubst " \$SENDGRID_KEY \$GOOGLE_CLIENT_ID \$GOOGLE_CLIENT_SECRET" | \
     envsubst "\$TWITTER_CONSUMER_KEY \$TWITTER_CONSUMER_SECRET \$TWITTER_ACCESS_TOKEN \$TWITTER_ACCESS_TOKEN_SECRET" \

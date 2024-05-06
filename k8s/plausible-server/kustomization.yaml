@@ -1,17 +1,17 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: plausible
 
-commonLabels:
-  app: plausible
-  name: plausible-server
 
-bases:
-  - ../base/
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
-  - service.yaml
+- deployment.yaml
+- ingress.yaml
+- service.yaml
+- ../base/
+labels:
+- includeSelectors: true
+  pairs:
+    app: plausible
+    name: plausible-server

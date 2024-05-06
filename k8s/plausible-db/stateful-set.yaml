@@ -29,7 +29,7 @@ spec:
         emptyDir: {}
       containers:
         - name: plausible-db
-          image: postgres:$POSTGRES_VERSION
+          image: $POSTGRES_IMAGE
           imagePullPolicy: Always
           ports:
             - containerPort: 5432

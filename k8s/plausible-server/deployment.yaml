@@ -69,10 +69,9 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 800Mi
-              cpu: 200m
+              memory: 1000Mi
             requests:
-              memory: 800Mi
+              memory: 1000Mi
               cpu: 100m
           # needed to comment out the probes last time to get it to deploy - turned out to need longer delay for liveness
           readinessProbe:

@@ -12,7 +12,7 @@ function main() {
 
   _console_msg "Running smoke tests for https://${DOMAIN}/ ..."
   
-  _smoke_test "${DOMAIN}" https://"${DOMAIN}"/ "Enter your email and password" "Login Page" "200"
+  _smoke_test "${DOMAIN}" https://"${DOMAIN}"/login "Enter your email and password" "Login Page" "200"
   _smoke_test "${DOMAIN}" https://"${DOMAIN}"/js/plausible.outbound-links.js "addEventListener" "Tag Script" "200"
 
   if [[ "${error:-}" != "0" ]]; then

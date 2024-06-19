@@ -6,6 +6,7 @@ variables:
   POSTGRES_IMAGE: postgres:14-alpine
   CLICKHOUSE_IMAGE: clickhouse/clickhouse-server:24.5.1-alpine
   PLAUSIBLE_IMAGE: ghcr.io/plausible/community-edition:v2.1.0-rc.0
+  GOOGLE_CREDENTIALS: "${APPLICATION_CI_CREDENTIALS}"
 
 deploy-db:
   stage: deploy

@@ -60,11 +60,11 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 500Mi
-              cpu: 100m
+              memory: 1000Mi
+              cpu: 200m
             requests:
-              memory: 500Mi
-              cpu: 50m
+              memory: 1000Mi
+              cpu: 200m
           readinessProbe:
             httpGet:
               path: /ping

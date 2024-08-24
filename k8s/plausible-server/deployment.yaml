@@ -26,7 +26,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: plausible-init
-          image: plausible=SET_BY_CI
+          image: plausible:SET_BY_CI
           command:
             - "/bin/sh"
             - "-c"
@@ -49,7 +49,7 @@ spec:
               - ALL
       containers:
         - name: plausible
-          image: plausible=SET_BY_CI
+          image: plausible:SET_BY_CI
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

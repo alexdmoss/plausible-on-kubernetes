@@ -30,7 +30,7 @@ spec:
         emptyDir: {}
       containers:
         - name: plausible-db
-          image: plausible-db=SET_BY_CI
+          image: plausible-db:SET_BY_CI
           imagePullPolicy: Always
           ports:
             - containerPort: 5432

@@ -3,12 +3,10 @@ kind: Kustomization
 
 namespace: plausible
 
-
-
 resources:
 - service.yaml
 - stateful-set.yaml
-- ../base/
+
 labels:
 - includeSelectors: true
   pairs:

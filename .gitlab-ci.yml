@@ -1,55 +1,61 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
+
 stages:
+- configure
 - deploy
 - smoke
 
 variables:
-  POSTGRES_IMAGE: postgres:14-alpine
-  CLICKHOUSE_IMAGE: clickhouse/clickhouse-server:24.5.1-alpine
   PLAUSIBLE_IMAGE: ghcr.io/plausible/community-edition:v2.1.0-rc.0
-  GOOGLE_CREDENTIALS: "${APPLICATION_CI_CREDENTIALS}"
+  GOOGLE_CREDENTIALS: "${APP_CI_CREDENTIALS}"
 
-deploy-db:
-  stage: deploy
+include:
+  # deploy db
+  - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest
+    inputs:
+      job-stage: deploy
+      job-suffix: db
+      app-name: plausible-db
+      namespace: plausible
+      image-name: postgres:14-alpine
+      manifest-dir: k8s/plausible-db
+      env-sub: '"\$POSTGRES_USER"'
+      rollout-type: statefulset
+  # deploy events-db
+  - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest
+    inputs:
+      job-stage: deploy
+      job-suffix: events-db
+      app-name: plausible-events-db
+      namespace: plausible
+      image-name: clickhouse/clickhouse-server:24.5.1-alpine
+      manifest-dir: k8s/plausible-events-db
+      rollout-type: statefulset
+  # deploy plausible
+  - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest
+    inputs:
+      job-stage: deploy
+      job-suffix: plausible
+      app-name: plausible
+      namespace: plausible
+      image-name: ghcr.io/plausible/community-edition:v2.1.0-rc.0
+      manifest-dir: k8s/plausible-server
+
+setup-secrets:
+  stage: configure
   image: mosstech/ci-tools:latest
-  rules:
-      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
-  before_script:
-    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
-    - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
-    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
-    - ./deploy.sh plausible-db
-
-deploy-events-db:
-  stage: deploy
-  image: mosstech/ci-tools:latest
-  rules:
-      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
-  before_script:
-    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
-    - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
-    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
-  script:
-    - ./deploy.sh plausible-events-db
-
-deploy-server:
-  stage: deploy
-  image: mosstech/ci-tools:latest
-  rules:
-      - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-      - if: '$CI_PIPELINE_SOURCE == "pipeline" && $DEPLOY_PLAUSIBLE == "true"'
-  before_script:
-    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
-    - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
-    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
-  script:
-    - ./deploy.sh plausible-server
-
+    - ./setup-secrets.sh
 
 smoke-test:
   stage: smoke
   image: mosstech/ci-tools:latest
+  needs:
+  - deploy-db
+  - deploy-events-db
+  - deploy-plausible
   script:
     - ./smoke-test.sh

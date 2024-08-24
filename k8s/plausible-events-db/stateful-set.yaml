@@ -5,6 +5,7 @@ metadata:
   name: plausible-events-db
 spec:
   replicas: 1
+  serviceAccountName: plausible
   updateStrategy:
     type: RollingUpdate
   serviceName: plausible-events-db
@@ -24,7 +25,7 @@ spec:
         fsGroup: 101
       containers:
         - name: plausible-events-db
-          image: $CLICKHOUSE_IMAGE
+          image: plausible-events-db=SET_BY_CI
           imagePullPolicy: Always
           ports:
             - containerPort: 8123

@@ -3,13 +3,11 @@ kind: Kustomization
 
 namespace: plausible
 
-
-
 resources:
 - config-map.yaml
 - service.yaml
 - stateful-set.yaml
-- ../base/
+
 labels:
 - includeSelectors: true
   pairs:

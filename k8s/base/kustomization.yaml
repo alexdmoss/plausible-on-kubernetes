@@ -3,11 +3,13 @@ kind: Kustomization
 
 namespace: plausible
 
-
 secretGenerator:
 - envs:
   - plausible-conf.env.secret
   name: plausible-config
+  options:
+    disableNameSuffixHash: true
+
 labels:
 - includeSelectors: true
   pairs:

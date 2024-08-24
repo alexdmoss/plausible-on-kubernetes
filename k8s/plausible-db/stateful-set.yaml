@@ -5,6 +5,7 @@ metadata:
   name: plausible-db
 spec:
   replicas: 1
+  serviceAccountName: plausible
   updateStrategy:
     type: RollingUpdate
   serviceName: plausible-db
@@ -29,7 +30,7 @@ spec:
         emptyDir: {}
       containers:
         - name: plausible-db
-          image: $POSTGRES_IMAGE
+          image: plausible-db=SET_BY_CI
           imagePullPolicy: Always
           ports:
             - containerPort: 5432

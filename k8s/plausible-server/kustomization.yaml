@@ -3,13 +3,11 @@ kind: Kustomization
 
 namespace: plausible
 
-
-
 resources:
 - deployment.yaml
 - ingress.yaml
 - service.yaml
-- ../base/
+
 labels:
 - includeSelectors: true
   pairs:

@@ -54,8 +54,8 @@ smoke-test:
   stage: smoke
   image: mosstech/ci-tools:latest
   needs:
-  - deploy-db
-  - deploy-events-db
-  - deploy-plausible
+  - deploy-k8s-db
+  - deploy-k8s-events-db
+  - deploy-k8s-plausible
   script:
     - ./smoke-test.sh

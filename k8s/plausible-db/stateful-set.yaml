@@ -68,7 +68,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -d plausible -U $POSTGRES_USER
+                - pg_isready -d plausible -U $PLAUSIBLE_DB_USER
             initialDelaySeconds: 20
             failureThreshold: 6
             periodSeconds: 10
@@ -77,7 +77,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -d plausible -U $POSTGRES_USER
+                - pg_isready -d plausible -U $PLAUSIBLE_DB_USER
             initialDelaySeconds: 30
             failureThreshold: 3
             periodSeconds: 10

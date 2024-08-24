@@ -23,7 +23,7 @@ include:
       namespace: plausible
       image-name: postgres:14-alpine
       manifest-dir: k8s/plausible-db
-      env-sub: '"\$POSTGRES_USER"'
+      env-sub: '"\$PLAUSIBLE_DB_USER"'
       rollout-type: statefulset
       skip-image-tag: "true"
   # deploy events-db

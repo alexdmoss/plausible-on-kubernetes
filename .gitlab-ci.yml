@@ -24,6 +24,7 @@ include:
       manifest-dir: k8s/plausible-db
       env-sub: '"\$POSTGRES_USER"'
       rollout-type: statefulset
+      skip-image-tag: "true"
   # deploy events-db
   - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest
     inputs:
@@ -34,6 +35,7 @@ include:
       image-name: clickhouse/clickhouse-server:24.5.1-alpine
       manifest-dir: k8s/plausible-events-db
       rollout-type: statefulset
+      skip-image-tag: "true"
   # deploy plausible
   - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest
     inputs:
@@ -43,6 +45,7 @@ include:
       namespace: plausible
       image-name: ghcr.io/plausible/community-edition:v2.1.0-rc.0
       manifest-dir: k8s/plausible-server
+      skip-image-tag: "true"
 
 setup-secrets:
   stage: configure

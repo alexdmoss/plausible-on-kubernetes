@@ -18,10 +18,10 @@ cat plausible-conf.env | \
   envsubst "\$POSTGRES_USER \$POSTGRES_PASSWORD \$CLICKHOUSE_USER \$CLICKHOUSE_PASSWORD" | \
   envsubst " \$SENDGRID_KEY \$GOOGLE_CLIENT_ID \$GOOGLE_CLIENT_SECRET" | \
   envsubst "\$TWITTER_CONSUMER_KEY \$TWITTER_CONSUMER_SECRET \$TWITTER_ACCESS_TOKEN \$TWITTER_ACCESS_TOKEN_SECRET" \
-  > k8s/base/plausible-conf.env.secret
+  > k8s/secret/plausible-conf.env.secret
 
 kustomize build k8s/secret/ | kubectl apply -f -
 
-trap "rm -f k8s/base/plausible-conf.env.secret" EXIT
+trap "rm -f k8s/secret/plausible-conf.env.secret" EXIT
 
 popd >/dev/null

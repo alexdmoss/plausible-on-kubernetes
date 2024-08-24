@@ -18,6 +18,7 @@ include:
     inputs:
       job-stage: deploy
       job-suffix: db
+      job-needs: ["setup-secrets"]
       app-name: plausible-db
       namespace: plausible
       image-name: postgres:14-alpine
@@ -30,6 +31,7 @@ include:
     inputs:
       job-stage: deploy
       job-suffix: events-db
+      job-needs: ["setup-secrets"]
       app-name: plausible-events-db
       namespace: plausible
       image-name: clickhouse/clickhouse-server:24.5.1-alpine
@@ -41,6 +43,7 @@ include:
     inputs:
       job-stage: deploy
       job-suffix: plausible
+      job-needs: ["deploy-k8s-db", "deploy-k8s-events-db"]
       app-name: plausible
       namespace: plausible
       image-name: ghcr.io/plausible/community-edition:v2.1.0-rc.0
@@ -61,8 +64,6 @@ smoke-test:
   stage: smoke
   image: mosstech/ci-tools:latest
   needs:
-  - deploy-k8s-db
-  - deploy-k8s-events-db
   - deploy-k8s-plausible
   script:
     - ./smoke-test.sh

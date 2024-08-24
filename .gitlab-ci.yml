@@ -47,6 +47,8 @@ include:
 setup-secrets:
   stage: configure
   image: mosstech/ci-tools:latest
+  before_script:
+    - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
   script:
     - ./setup-secrets.sh
 

@@ -5,7 +5,6 @@ metadata:
   name: plausible
 spec:
   replicas: 1
-  serviceAccountName: plausible
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -17,6 +16,7 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
       restartPolicy: Always
+      serviceAccountName: plausible
       nodeSelector:
         cloud.google.com/gke-spot: "true"
       terminationGracePeriodSeconds: 25

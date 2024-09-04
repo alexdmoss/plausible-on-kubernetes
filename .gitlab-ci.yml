@@ -9,7 +9,7 @@ stages:
 - smoke
 
 variables:
-  PLAUSIBLE_IMAGE: ghcr.io/plausible/community-edition:v2.1.0-rc.0
+  PLAUSIBLE_IMAGE: ghcr.io/plausible/community-edition:v2.1.1
   GOOGLE_CREDENTIALS: "${APP_CI_CREDENTIALS}"
 
 include:
@@ -21,7 +21,7 @@ include:
       job-needs: ["setup-secrets"]
       app-name: plausible-db
       namespace: plausible
-      image-name: postgres:14-alpine
+      image-name: postgres:16-alpine
       manifest-dir: k8s/plausible-db
       env-sub: '"\$PLAUSIBLE_DB_USER"'
       rollout-type: statefulset
@@ -34,7 +34,7 @@ include:
       job-needs: ["setup-secrets"]
       app-name: plausible-events-db
       namespace: plausible
-      image-name: clickhouse/clickhouse-server:24.5.1-alpine
+      image-name: clickhouse/clickhouse-server:24.8.3-alpine
       manifest-dir: k8s/plausible-events-db
       rollout-type: statefulset
       skip-image-tag: "true"
@@ -46,7 +46,7 @@ include:
       job-needs: ["deploy-k8s-db", "deploy-k8s-events-db"]
       app-name: plausible
       namespace: plausible
-      image-name: ghcr.io/plausible/community-edition:v2.1.0-rc.0
+      image-name: ghcr.io/plausible/community-edition:v2.1.1
       manifest-dir: k8s/plausible-server
       skip-image-tag: "true"
 

@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smtp-config
+data:
+  smtp_config.exs: |
+    import Config
+
+    config :plausible, Plausible.Mailer,
+      ssl: [middlebox_comp_mode: false]

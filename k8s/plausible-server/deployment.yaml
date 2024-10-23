@@ -89,3 +89,11 @@ spec:
             initialDelaySeconds: 60
             failureThreshold: 3
             periodSeconds: 10
+          volumeMounts:
+          - name: smtp-config-volume
+            mountPath: /opt/config
+            readOnly: true
+      volumes:
+      - name: smtp-config-volume
+        configMap:
+          name: smtp-config

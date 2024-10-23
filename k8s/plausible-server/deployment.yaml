@@ -47,6 +47,10 @@ spec:
             capabilities:
               drop:
               - ALL
+          volumeMounts:
+          - name: smtp-config-volume
+            mountPath: /opt/config
+            readOnly: true
       containers:
         - name: plausible
           image: plausible:SET_BY_CI

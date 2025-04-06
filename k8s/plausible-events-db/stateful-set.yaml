@@ -61,9 +61,9 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 1000Mi
+              memory: 2000Mi
             requests:
-              memory: 1000Mi
+              memory: 2000Mi
               cpu: 200m
           readinessProbe:
             httpGet:

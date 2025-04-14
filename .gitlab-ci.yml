@@ -33,7 +33,7 @@ include:
       job-needs: ["setup-secrets"]
       app-name: plausible-events-db
       namespace: plausible
-      image-name: clickhouse/clickhouse-server:25.2.1-alpine
+      image-name: clickhouse/clickhouse-server:25.3.2-alpine
       manifest-dir: k8s/plausible-events-db
       rollout-type: statefulset
       skip-image-tag: "true"
@@ -45,7 +45,7 @@ include:
       job-needs: ["deploy-k8s-db", "deploy-k8s-events-db"]
       app-name: plausible
       namespace: plausible
-      image-name: ghcr.io/plausible/community-edition:v2.1.5
+      image-name: ghcr.io/plausible/community-edition:v3.0.1
       manifest-dir: k8s/plausible-server
       skip-image-tag: "true"
 

@@ -23,7 +23,7 @@ spec:
       disabledDefaultServices: ["ro", "r"]
   bootstrap:
     initdb:
-      database: postgres
+      database: plausible
       owner: alexos_pg
-      secret:
-        name: plausible-db-pass
+  enableSuperuserAccess: false
+  # we do not use backup functionality of CNPG here, as having to do PVC snapshots for Clickhouse already anyway

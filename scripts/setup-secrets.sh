@@ -22,9 +22,6 @@ cat plausible-conf.env | \
 
 kustomize build k8s/secret/ | kubectl apply -f -
 
-kubectl delete secret plausible-db-pass --ignore-not-found=true
-kubectl create secret generic plausible-db-pass --from-literal="password=${POSTGRES_PASSWORD}" --from-literal="username=${POSTGRES_USER}"
-
 trap "rm -f k8s/secret/plausible-conf.env.secret" EXIT
 
 popd >/dev/null

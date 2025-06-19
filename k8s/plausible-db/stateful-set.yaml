@@ -15,6 +15,7 @@ spec:
     spec:
       restartPolicy: Always
       serviceAccountName: plausible
+      automountServiceAccountToken: false
       nodeSelector:
         cloud.google.com/gke-spot: "true"
       terminationGracePeriodSeconds: 25

@@ -10,6 +10,7 @@ spec:
     namespace: ingress
   hostnames:
   - visits.alexos.dev
+  - plausible.alexos.dev
   rules:
   - backendRefs:
     - name: plausible

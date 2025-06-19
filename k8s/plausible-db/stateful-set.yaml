@@ -59,10 +59,10 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 300Mi
+              memory: 500Mi
             requests:
-              memory: 300Mi
-              cpu: 10m
+              memory: 500Mi
+              cpu: 50m
           readinessProbe:
             exec:
               command:

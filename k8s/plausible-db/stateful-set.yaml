@@ -32,6 +32,8 @@ spec:
       containers:
         - name: plausible-db
           image: plausible-db:SET_BY_CI
+          args:
+            - -d 5
           imagePullPolicy: Always
           ports:
             - containerPort: 5432
@@ -50,6 +52,12 @@ spec:
               value: plausible
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
+            - name: PG_OOM_ADJUST_FILE
+              value: /proc/self/oom_score_adj
+            - name: PG_OOM_ADJUST_VALUE
+              value: "900"
+            - name: POSTGRESQL_MAX_CONNECTIONS
+              value: "5"
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -60,6 +68,7 @@ spec:
           resources:
             limits:
               memory: 1000Mi
+              cpu: 250m
             requests:
               memory: 1000Mi
               cpu: 250m

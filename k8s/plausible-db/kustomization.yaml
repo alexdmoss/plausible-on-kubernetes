@@ -4,8 +4,9 @@ kind: Kustomization
 namespace: plausible
 
 resources:
-- service.yaml
-- stateful-set.yaml
+- plausible-db.yaml
+# - service.yaml
+# - stateful-set.yaml
 
 labels:
 - includeSelectors: true

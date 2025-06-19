@@ -6,7 +6,7 @@ if [[ -z "${GCP_PROJECT_ID:-}" ]]; then
   exit 1
 fi
 
-pushd "$(dirname "${BASH_SOURCE[0]}")/" > /dev/null
+pushd "$(dirname "${BASH_SOURCE[0]}")/../" > /dev/null
 
 plausible_secrets=$(gcloud secrets versions access latest --secret="PLAUSIBLE" --project="${GCP_PROJECT_ID}")
 # shellcheck disable=2046
@@ -21,6 +21,9 @@ cat plausible-conf.env | \
   > k8s/secret/plausible-conf.env.secret
 
 kustomize build k8s/secret/ | kubectl apply -f -
+
+kubectl delete secret plausible-db-pass --ignore-not-found=true
+kubectl create secret generic plausible-db-pass --from-literal="password=${POSTGRES_PASSWORD}" --from-literal="username=${POSTGRES_USER}"
 
 trap "rm -f k8s/secret/plausible-conf.env.secret" EXIT
 

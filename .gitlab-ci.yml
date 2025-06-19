@@ -49,7 +49,7 @@ include:
       manifest-dir: k8s/plausible-server
       skip-image-tag: "true"
 
-setup-secrets:
+configure:
   stage: configure
   image: mosstech/ci-tools:latest
   before_script:
@@ -57,7 +57,8 @@ setup-secrets:
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
     - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
-    - ./setup-secrets.sh
+    - ./scripts/install-operator.sh
+    - ./scripts/setup-secrets.sh
 
 smoke-test:
   stage: smoke
@@ -65,4 +66,4 @@ smoke-test:
   needs:
   - deploy-k8s-plausible
   script:
-    - ./smoke-test.sh
+    - ./scripts/smoke-test.sh

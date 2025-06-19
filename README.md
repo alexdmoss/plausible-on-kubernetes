@@ -10,23 +10,10 @@ Repo for self-hosting Plausible on a Kubernetes cluster.
 
 ## To Do
 
-- [x] Sort out secrets
-- [x] Sort out database
-- [x] Deploy main app into GKE
-- [x] Secret generator so it restarts on config change
-- [x] Test email works
-- [x] Try without SMTP relay process
-- [x] Deal with latest tags
-- [-] _skipped: seems to work fine with the DB-IP option:_ MaxMind GeoIP
-- [x] _edit on ingress service needed:_ Check X-Forwarded-For header bit
 - [x] [Outbound link tracking test](https://plausible.io/docs/outbound-link-click-tracking)
 - [x] [404 tracking test](https://plausible.io/docs/404-error-pages-tracking)
 - [x] _[this](https://plausible.io/docs/google-search-console-integration) worked fine but takes a few days to kick in:_ Google Search integration
 - [ ] _waiting for:_ Twitter integration
-- [x] Data backup
-- [x] _done for mw - works fine:_ [Proxy the tracking JS](https://plausible.io/docs/proxy/introduction)
-- [x] Tests in CI
-- [x] _only frontend:_ HA
 
 ## Installation Notes
 

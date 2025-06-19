@@ -1,0 +1,29 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: plausible-db
+spec:
+  description: "Plausible Analytics PostgreSQL Database"
+  imageName: ghcr.io/cloudnative-pg/postgresql:14
+  instances: 1
+  storage:
+    size: 15Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+  monitoring:
+    enablePodMonitor: true
+  managed:
+    services:
+      disabledDefaultServices: ["ro", "r"]
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: alexos_pg
+      secret:
+        name: plausible-db-pass

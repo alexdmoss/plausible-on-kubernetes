@@ -17,7 +17,7 @@ include:
     inputs:
       job-stage: deploy
       job-suffix: db
-      job-needs: ["setup-secrets"]
+      job-needs: ["configure"]
       app-name: plausible-db
       namespace: plausible
       image-name: postgres:16-alpine
@@ -30,7 +30,7 @@ include:
     inputs:
       job-stage: deploy
       job-suffix: events-db
-      job-needs: ["setup-secrets"]
+      job-needs: ["configure"]
       app-name: plausible-events-db
       namespace: plausible
       image-name: clickhouse/clickhouse-server:25.3.2-alpine

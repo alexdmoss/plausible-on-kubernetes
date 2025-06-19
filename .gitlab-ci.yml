@@ -23,7 +23,7 @@ include:
       image-name: postgres:16-alpine
       manifest-dir: k8s/plausible-db
       env-sub: '"\$PLAUSIBLE_DB_USER"'
-      rollout-type: statefulset
+      skip-rollout-check: "true"          # now managed by CNPG operator
       skip-image-tag: "true"
   # deploy events-db
   - component: gitlab.com/alexos-dev/gitlab-ci-components/deploy-k8s@~latest

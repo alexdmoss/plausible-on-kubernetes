@@ -59,10 +59,10 @@ spec:
               - ALL
           resources:
             limits:
-              memory: 500Mi
+              memory: 1000Mi
             requests:
-              memory: 500Mi
-              cpu: 50m
+              memory: 1000Mi
+              cpu: 250m
           readinessProbe:
             exec:
               command:
@@ -88,4 +88,4 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 15Gi
+            storage: 25Gi

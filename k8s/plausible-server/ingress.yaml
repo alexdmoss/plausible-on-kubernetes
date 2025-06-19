@@ -9,7 +9,7 @@ spec:
     name: shared-gateway
     namespace: ingress
   hostnames:
-  - plausible.alexos.dev
+  - visits.alexos.dev
   rules:
   - backendRefs:
     - name: plausible

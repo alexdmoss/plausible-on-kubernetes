@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euoE pipefail
 
-DOMAIN=plausible.alexos.dev
+DOMAIN=visits.alexos.dev
 export DOMAIN
 
 function main() {
@@ -14,6 +14,7 @@ function main() {
   
   _smoke_test "${DOMAIN}" https://"${DOMAIN}"/login "Enter your account credentials" "Login Page" "200"
   _smoke_test "${DOMAIN}" https://"${DOMAIN}"/js/plausible.outbound-links.js "addEventListener" "Tag Script" "200"
+  _smoke_test "${DOMAIN}" https://"${DOMAIN}"/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js "addEventListener" "Tag Script Full" "200"
 
   if [[ "${error:-}" != "0" ]]; then
       _console_msg "Tests FAILED - see messages above for for detail" ERROR

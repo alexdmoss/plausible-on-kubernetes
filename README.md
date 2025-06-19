@@ -90,7 +90,7 @@ server {
 
   # proxy to plausible script - my self-hosted copy
   location = /js/visits.js {
-      proxy_pass https://plausible.alexos.dev/js/plausible.outbound-links.js;
+      proxy_pass https://visits.alexos.dev/js/plausible.outbound-links.js;
       proxy_buffering on;
 
       # Cache the script for 6 hours, as long as plausible returns a valid response
@@ -99,15 +99,15 @@ server {
       proxy_cache_use_stale updating error timeout invalid_header http_500;
       add_header X-Cache $upstream_cache_status;
 
-      proxy_set_header Host plausible.alexos.dev;
-      proxy_ssl_name plausible.alexos.dev;
+      proxy_set_header Host visits.alexos.dev;
+      proxy_ssl_name visits.alexos.dev;
       proxy_ssl_server_name on;
       proxy_ssl_session_reuse off;
   }
 
   # proxy to plausible API - my self-hosted copy
   location = /api/event {
-      proxy_pass https://plausible.alexos.dev/api/event;
+      proxy_pass https://visits.alexos.dev/api/event;
       proxy_buffering on;
       proxy_http_version 1.1;
       
@@ -115,8 +115,8 @@ server {
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Forwarded-Host  $host;
 
-      proxy_set_header Host plausible.alexos.dev;
-      proxy_ssl_name plausible.alexos.dev;
+      proxy_set_header Host visits.alexos.dev;
+      proxy_ssl_name visits.alexos.dev;
       proxy_ssl_server_name on;
       proxy_ssl_session_reuse off;
   }

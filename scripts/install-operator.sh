@@ -8,6 +8,6 @@ fi
 
 pushd "$(dirname "${BASH_SOURCE[0]}")/../" > /dev/null
 
-kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.26/releases/cnpg-1.26.0.yaml
+kubectl apply --server-side -f ./k8s/cnpg-1.26.0.yaml
 
 popd >/dev/null

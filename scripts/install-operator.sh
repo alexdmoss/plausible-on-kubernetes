@@ -8,7 +8,6 @@ fi
 
 pushd "$(dirname "${BASH_SOURCE[0]}")/../" > /dev/null
 
-kubectl get po -n=plausible
 kubectl apply --server-side -f ./k8s/cnpg-1.26.0.yaml
 
 popd >/dev/null

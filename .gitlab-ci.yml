@@ -51,18 +51,18 @@ include:
 
 configure:
   stage: configure
-  image: mosstech/ci-tools:latest
+  image: al3xos/ci-tools:latest
   before_script:
     - echo "${GOOGLE_CREDENTIALS}" | gcloud auth activate-service-account --key-file -
     - region=$(gcloud container clusters list --project=${GCP_PROJECT_ID} --filter "NAME=${CLUSTER_NAME}" --format "value(zone)")
-    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region} --dns-endpoint
+    - gcloud container clusters get-credentials ${CLUSTER_NAME} --project=${GCP_PROJECT_ID} --region=${region}
   script:
     - ./scripts/install-operator.sh
     - ./scripts/setup-secrets.sh
 
 smoke-test:
   stage: smoke
-  image: mosstech/ci-tools:latest
+  image: al3xos/ci-tools:latest
   needs:
   - deploy-k8s-plausible
   script:

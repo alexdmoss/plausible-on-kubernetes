@@ -17819,7 +17819,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: cnpg-manager
-      automountServiceAccountToken: false
+      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 10
       volumes:
       - emptyDir: {}

@@ -20,7 +20,7 @@ spec:
       automountServiceAccountToken: false
       nodeSelector:
         cloud.google.com/gke-spot: "true"
-      terminationGracePeriodSeconds: 20
+      terminationGracePeriodSeconds: 25
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000

@@ -7,7 +7,6 @@ resources:
 - deployment.yaml
 - ingress.yaml
 - service.yaml
-- smtp-config.yaml
 
 labels:
 - includeSelectors: true
